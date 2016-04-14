@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PlayerGroupController : MonoBehaviour
 {
-    CameraTransition camController = new CameraTransition();
+    //CameraTransition camController = new CameraTransition();
     List<Transform> players = new List<Transform>();
     int currentPlayer = 0;
 
@@ -38,7 +38,6 @@ public class PlayerGroupController : MonoBehaviour
             }
             index++;
         }
-
     }
 
     public void EndTurn()
@@ -51,7 +50,7 @@ public class PlayerGroupController : MonoBehaviour
         if (currentPlayer > players.Count -1)
             currentPlayer = 0;
         
-        StartCoroutine(camController.Transition(
+        StartCoroutine(CameraTransition.Transition(
                        players[currentPlayer], lookAtTarget));
     }
 

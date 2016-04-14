@@ -1,46 +1,51 @@
-﻿using UnityEngine;
+﻿/*
+    Usage:
+            call the Transition coroutine when you wanna make the camera transition from 
+            it's current location to another.
+
+            void EndTurn()
+            {
+                StartCoroutine(CameraTransition.Transition(player.transform, Vector3.zero));
+            }
+*/
+
+using UnityEngine;
 using System.Collections;
 
-public class CameraTransition
-{
-    float smoothing = 0.01f;
-    void CallCamera(Vector3 toPos, Vector3 lookAt)
-    {
-        //Vector3 fromPos = Camera.main.transform.position;
+public class CameraTransition : MonoBehaviour
+{    
+    static float smoothing = 2f;
+    static bool isRunning;
 
-        //CamTransition(lookAt, fromPos, toPos);
+    public static IEnumerator Transition(Transform target, Vector3 lookAt)
+    {        
+        //Vector3 fromPos = Camera.main.transform.position;   //this don't work because fromPos is set to camera position here, but
+                                                              //is never updated with new position 'cause coroutine moves past this
+                                                              //point and the position remains outside of the current position and
+                                                              //new position range, rendering it invalid
 
-    }
+        if(isRunning)         //since coroutines run as seperate instances, this will stop the new instance if one is already running
+            yield break;
 
-    public IEnumerator Transition(Transform target, Vector3 lookAt)
-    {
-        GameObject camera = Camera.main.gameObject;     // Find Main camera in Scene
-        Vector3 fromPos = camera.transform.position;
+        isRunning = true;
 
-         
-        camera.transform.parent = target;               // Parents Camera to target's transform to insure posistion displacement is realtive to target
-                
+        Camera.main.transform.parent = target;      // Parent camera to target's transform to insure relative position displacement
 
-        
-        while (Vector3.Distance(fromPos, target.position) > 1.05f)
+        Vector3 toPos = new Vector3(0, 28f, -6f);
+
+        while ((Camera.main.transform.localPosition - toPos).sqrMagnitude > 0.0005f)
         {
-            camera.transform.localPosition = Vector3.Lerp(fromPos, new Vector3(0, 28f, -6f), smoothing * Time.deltaTime);
-            Camera.main.transform.LookAt(lookAt);
+            Camera.main.transform.localPosition = Vector3.Lerp(Camera.main.transform.localPosition, 
+                                             toPos, smoothing * Time.deltaTime);
+            Camera.main.transform.LookAt(lookAt);   //camera always faces target
 
             yield return null;
         }
-        camera.transform.parent = null;                             // Un-Parent camera from target
 
-        //Vector3 fromPos = Camera.main.transform.position;
+        Camera.main.transform.localPosition = toPos;    //the camera will be a hair away from it's target, unacceptable.
+        Camera.main.transform.parent = null;
 
-        //while (Vector3.Distance(fromPos, toPos) > 1.05f)
-        //{
-        //    Camera.main.transform.position = Vector3.Lerp(fromPos, toPos, smoothing * Time.deltaTime);
-        //    Camera.main.transform.LookAt(lookAt);
-
-        //    yield return null;
-        //}        
-
+        isRunning = false;
         Debug.Log("Transition Done");
     }
 }
