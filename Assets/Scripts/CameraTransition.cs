@@ -31,7 +31,7 @@ public class CameraTransition : MonoBehaviour
 
         Camera.main.transform.parent = target;      // Parent camera to target's transform to insure relative position displacement
 
-        Vector3 toPos = new Vector3(0, 28f, -6f);
+        Vector3 toPos = new Vector3(20.27f, 22.62f, -4.11f);
 
         while ((Camera.main.transform.localPosition - toPos).sqrMagnitude > 0.0005f)
         {
