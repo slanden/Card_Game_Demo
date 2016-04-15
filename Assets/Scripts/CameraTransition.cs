@@ -14,8 +14,10 @@ using System.Collections;
 
 public class CameraTransition : MonoBehaviour
 {    
-    static float smoothing = 2f;
+    static float smoothing = 2.5f;
     static bool isRunning;
+    static bool isAwayFromStartPos = false;
+    static bool isNearDesiredHeight = false;
 
     public static IEnumerator Transition(Transform target, Vector3 lookAt)
     {        
@@ -37,6 +39,26 @@ public class CameraTransition : MonoBehaviour
         {
             Camera.main.transform.localPosition = Vector3.Lerp(Camera.main.transform.localPosition, 
                                              toPos, smoothing * Time.deltaTime);
+
+            #region make camera droop down during transition
+            //float speed = 1f;
+            //Vector3 ySine = Camera.main.transform.localPosition;
+
+            //if (!isNearDesiredHeight)
+            //{
+            //    if ((toPos.y - ySine.y) >= 0.1f)
+            //        isAwayFromStartPos = true;
+
+
+            //    ySine.y = Mathf.Sin(Time.time * speed) * (ySine.y / 3) + ySine.y; //instead of 5, add transform's height in world space
+
+            //    Camera.main.transform.localPosition = ySine;
+            //    Debug.Log(ySine);
+            //}
+            //else if ((toPos.y - ySine.y) <= 0.1f && isAwayFromStartPos)
+            //    isNearDesiredHeight = true;
+            #endregion
+
             Camera.main.transform.LookAt(lookAt);   //camera always faces target
 
             yield return null;
